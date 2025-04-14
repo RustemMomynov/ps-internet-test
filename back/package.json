@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@graphql-yoga/node": "^3.9.1",
+    "@typegoose/typegoose": "^12.14.0",
+    "aws-sdk": "^2.1692.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "graphql": "^16.10.0",
+    "mongoose": "^8.13.2",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
+  }
+}
