@@ -1,15 +1,31 @@
 "use client";
 
-import { Upload, Button, Image, Space } from "antd";
+import { Upload, Button, Image, Space, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadFile } from "antd/es/upload/interface";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useFileStore } from "@/store/fileStore";
+import { useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-const FileUpload = () => {
+const UPLOAD_FILE = gql`
+  mutation UploadFile($input: UploadFileInput!, $file: Upload!) {
+    uploadFile(input: $input, file: $file) {
+      _id
+      name
+      url
+      type
+      size
+    }
+  }
+`;
+
+const FileUpload: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const { addFile } = useFileStore();
+
+  const [uploadFileMutation, { loading }] = useMutation(UPLOAD_FILE);
 
   const handlePreviewGeneration = (files: File[]) => {
     const readers = files.map((file) => {
@@ -20,33 +36,43 @@ const FileUpload = () => {
       });
     });
 
-    Promise.all(readers).then((results) => {
-      setPreviews(results);
-    });
+    Promise.all(readers).then(setPreviews);
   };
 
   const handleFileChange = (info: any) => {
     const files = info.fileList;
     setFileList(files);
-
     const rawFiles = files.map((f: any) => f.originFileObj).filter(Boolean);
     handlePreviewGeneration(rawFiles);
   };
 
-  const handleUpload = () => {
-    fileList.forEach((f) => {
-      const raw = f.originFileObj;
-      if (!raw) return;
+  const handleUpload = async () => {
+    for (const file of fileList) {
+      const raw = file.originFileObj;
+      if (!raw) continue;
 
-      addFile({
-        id: `${Date.now()}-${raw.name}`,
-        name: raw.name,
-        size: raw.size,
-        type: raw.type,
-        url: URL.createObjectURL(raw),
-      });
-    });
+      try {
+        const { data } = await uploadFileMutation({
+          variables: {
+            input: {
+              name: raw.name,
+              size: raw.size,
+              type: raw.type,
+            },
+            file: raw,
+          },
+        });
 
+        if (data?.uploadFile) {
+          addFile(data.uploadFile);
+        }
+      } catch (err) {
+        console.error(err);
+        message.error(`Ошибка загрузки: ${file.name}`);
+      }
+    }
+
+    message.success("Все файлы загружены!");
     setFileList([]);
     setPreviews([]);
   };
@@ -64,26 +90,22 @@ const FileUpload = () => {
       </Upload>
 
       {previews.length > 0 && (
-        <div style={{ marginTop: 20 }}>
-          <h4>Предпросмотр:</h4>
-          <Space wrap>
-            {previews.map((src, index) => (
-              <Image
-                key={index}
-                src={src}
-                width={120}
-                height={120}
-                style={{ objectFit: "cover", borderRadius: 8 }}
-              />
+        <>
+          <Space wrap style={{ marginTop: 16 }}>
+            {previews.map((src, idx) => (
+              <Image key={idx} src={src} width={120} />
             ))}
           </Space>
 
-          <div style={{ marginTop: 16 }}>
-            <Button type="primary" onClick={handleUpload}>
-              Загрузить
-            </Button>
-          </div>
-        </div>
+          <Button
+            type="primary"
+            onClick={handleUpload}
+            style={{ marginTop: 16 }}
+            loading={loading}
+          >
+            Загрузить на сервер
+          </Button>
+        </>
       )}
     </div>
   );

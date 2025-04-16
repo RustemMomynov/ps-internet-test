@@ -9,6 +9,9 @@ export const fileResolvers = {
   },
   Mutation: {
     uploadFile: async (_: any, { input, file }: any) => {
+      console.log("input", input);
+      console.log("file", file);
+
       const { name, size, type } = input;
 
       // file = Promise<FileUpload>

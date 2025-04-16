@@ -1,4 +1,9 @@
 {
+  "name": "back",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "nodemon src/index.ts"
+  },
   "dependencies": {
     "@graphql-yoga/node": "^3.9.1",
     "@typegoose/typegoose": "^12.14.0",
@@ -14,6 +19,8 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.14.1",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
 }

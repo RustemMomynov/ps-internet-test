@@ -1,6 +1,5 @@
 import { createSchema } from "graphql-yoga";
 import { fileResolvers } from "./resolvers/file";
-import { File } from "./models/File";
 
 const typeDefs = /* GraphQL */ `
   scalar Upload

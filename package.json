@@ -1,0 +1,19 @@
+{
+  "name": "ps-internet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/RustemMomynov/ps-internet-test.git",
+  "author": "Rustem <slehder5657@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "front",
+    "back"
+  ],
+  "scripts": {
+    "dev": "concurrently --names \"front,back\" --prefix name \"yarn workspace front dev\" \"yarn workspace back dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
