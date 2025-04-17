@@ -1,95 +1,66 @@
 "use client";
 
-import { Upload, Button, Image, Space, message } from "antd";
+import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import type { UploadFile } from "antd/es/upload/interface";
-import React, { useState } from "react";
-import { useFileStore } from "@/store/fileStore";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 
-const UPLOAD_FILE = gql`
-  mutation UploadFile($input: UploadFileInput!, $file: Upload!) {
-    uploadFile(input: $input, file: $file) {
-      _id
-      name
+const GET_PRESIGNED_POST = gql`
+  query GetPresignedPost($fileName: String!) {
+    getPresignedPost(fileName: $fileName) {
       url
-      type
-      size
+      fields
     }
   }
 `;
 
-const FileUpload: React.FC = () => {
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const { addFile } = useFileStore();
+const FileUpload = () => {
+  const [getPresignedPost] = useLazyQuery(GET_PRESIGNED_POST);
 
-  const [uploadFileMutation, { loading }] = useMutation(UPLOAD_FILE);
+  const handleCustomRequest = async (options: any) => {
+    const { file, onSuccess, onError } = options;
 
-  const handlePreviewGeneration = (files: File[]) => {
-    const readers = files.map((file) => {
-      return new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
+    try {
+      const { data } = await getPresignedPost({
+        variables: { fileName: file.name },
       });
-    });
+      const { url, fields } = data.getPresignedPost;
 
-    Promise.all(readers).then(setPreviews);
-  };
+      const formData = new FormData();
+      Object.entries(fields).forEach(([k, v]) => {
+        formData.append(k, v as any);
+      });
+      formData.append("file", file);
 
-  const handleFileChange = (info: any) => {
-    const files = info.fileList;
-    setFileList(files);
-    const rawFiles = files.map((f: any) => f.originFileObj).filter(Boolean);
-    handlePreviewGeneration(rawFiles);
-  };
+      const res = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
 
-  const handleUpload = async () => {
-    for (const file of fileList) {
-      const raw = file.originFileObj;
-      if (!raw) continue;
-
-      try {
-        const { data } = await uploadFileMutation({
-          variables: {
-            input: {
-              name: raw.name,
-              size: raw.size,
-              type: raw.type,
-            },
-            file: raw,
-          },
-        });
-
-        if (data?.uploadFile) {
-          addFile(data.uploadFile);
-        }
-      } catch (err) {
-        console.error(err);
-        message.error(`Ошибка загрузки: ${file.name}`);
+      if (res.ok) {
+        message.success(`${file.name} uploaded successfully`);
+        onSuccess?.({}, file);
+      } else {
+        throw new Error(`Upload failed with status ${res.status}`);
       }
+    } catch (err) {
+      console.error(err);
+      message.error(`${file.name} upload failed`);
+      onError?.(err);
     }
-
-    message.success("Все файлы загружены!");
-    setFileList([]);
-    setPreviews([]);
   };
 
   return (
     <div>
       <Upload
         multiple
-        beforeUpload={() => false}
-        fileList={fileList}
-        onChange={handleFileChange}
-        showUploadList={{ showPreviewIcon: false }}
+        customRequest={handleCustomRequest}
+        showUploadList={false}
       >
         <Button icon={<UploadOutlined />}>Выбрать файлы</Button>
       </Upload>
 
-      {previews.length > 0 && (
+      {/* {previews.length > 0 && (
         <>
           <Space wrap style={{ marginTop: 16 }}>
             {previews.map((src, idx) => (
@@ -106,7 +77,7 @@ const FileUpload: React.FC = () => {
             Загрузить на сервер
           </Button>
         </>
-      )}
+      )} */}
     </div>
   );
 };

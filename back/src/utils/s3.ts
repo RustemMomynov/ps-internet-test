@@ -1,29 +1,18 @@
-import AWS from "aws-sdk";
-import { v4 as uuidv4 } from "uuid";
+import { createPresignedPost as createPost } from "@aws-sdk/s3-presigned-post";
+import { S3Client } from "@aws-sdk/client-s3";
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  region: process.env.AWS_REGION!,
-});
+export async function createPresignedPost(fileName: string) {
+  const s3 = new S3Client({
+    region: process.env.AWS_REGION!,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    },
+  });
 
-const s3 = new AWS.S3();
-
-export const uploadToS3 = async (
-  buffer: Buffer,
-  filename: string,
-  mimetype: string
-): Promise<string> => {
-  const key = `${Date.now()}-${uuidv4()}-${filename}`;
-
-  const params = {
+  return createPost(s3, {
     Bucket: process.env.AWS_BUCKET_NAME!,
-    Key: key,
-    Body: buffer,
-    ContentType: mimetype,
-    ACL: "public-read",
-  };
-
-  const result = await s3.upload(params).promise();
-  return result.Location; // Публичный URL
-};
+    Key: `uploads/${Date.now()}-${fileName}`,
+    Expires: 60,
+  });
+}
