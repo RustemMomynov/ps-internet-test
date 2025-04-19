@@ -4,48 +4,85 @@ import dotenv from "dotenv";
 import { connectDB } from "./utils/db";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-import { fakeUser } from "./auth/User";
-import bcrypt from "bcryptjs";
+import { schema } from "./schema";
 
 dotenv.config();
 
 const SECRET = "supersecret";
 
-const typeDefs = /* GraphQL */ `
-  type Query {
-    secretData: String!
-  }
+// const SECRET = "supersecret";
 
-  type Mutation {
-    login(username: String!, password: String!): String!
-  }
-`;
+// const typeDefs = /* GraphQL */ `
+//   scalar JSON
+//   scalar Date
 
-const resolvers = {
-  Query: {
-    secretData: (_: any, __: any, context: any) => {
-      if (!context.user) {
-        throw new Error("Нет доступа");
-      }
-      return "Секретная информация";
-    },
-  },
-  Mutation: {
-    login: async (_: any, { username, password }: any) => {
-      if (username !== fakeUser.username) {
-        throw new Error("Неверный логин");
-      }
+//   type PresignedPostData {
+//     url: String!
+//     fields: JSON!
+//   }
 
-      const isValid = await bcrypt.compare(password, fakeUser.password);
-      if (!isValid) {
-        throw new Error("Неверный пароль");
-      }
+//   type File {
+//     _id: ID!
+//     name: String!
+//     url: String!
+//     createdAt: String!
+//     updatedAt: String!
+//   }
 
-      const token = jwt.sign({ username }, SECRET, { expiresIn: "1h" });
-      return token;
-    },
-  },
-};
+//   type Query {
+//     secretData: String!
+//     getPresignedPost(fileName: String!): PresignedPostData!
+//   }
+
+//   input SaveFileInput {
+//     name: String!
+//     url: String!
+//   }
+
+//   type Mutation {
+//     login(username: String!, password: String!): String!
+//     saveFiles(files: [SaveFileInput!]!): [File!]!
+//   }
+// `;
+
+// const resolvers = {
+//   Query: {
+//     secretData: (_: any, __: any, context: any) => {
+//       if (!context.user) {
+//         throw new Error("Нет доступа");
+//       }
+//       return "Секретная информация";
+//     },
+//     getPresignedPost: async (_: any, { fileName }: { fileName: string }) => {
+//       const data = await createPresignedPost(fileName);
+//       return {
+//         url: data.url,
+//         fields: data.fields,
+//       };
+//     },
+//   },
+//   Mutation: {
+//     login: async (_: any, { username, password }: any) => {
+//       if (username !== fakeUser.username) {
+//         throw new Error("Неверный логин");
+//       }
+
+//       const isValid = await bcrypt.compare(password, fakeUser.password);
+//       if (!isValid) {
+//         throw new Error("Неверный пароль");
+//       }
+
+//       const token = jwt.sign({ username }, SECRET, { expiresIn: "1h" });
+//       return token;
+//     },
+//     saveFiles: async (
+//       _: any,
+//       { files }: { files: { name: string; url: string }[] }
+//     ) => {
+//       return await FileModel.insertMany(files);
+//     },
+//   },
+// };
 
 async function main() {
   try {
@@ -54,10 +91,7 @@ async function main() {
     const app = express();
 
     const yoga = createYoga({
-      schema: createSchema({
-        typeDefs,
-        resolvers,
-      }),
+      schema,
       graphqlEndpoint: "/graphql",
       context: ({ request }) => {
         const auth = request.headers.get("authorization");

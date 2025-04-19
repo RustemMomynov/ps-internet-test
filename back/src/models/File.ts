@@ -6,6 +6,12 @@ export class File {
   name!: string;
 
   @prop({ required: true })
+  size!: number;
+
+  @prop({ required: true })
+  type!: string;
+
+  @prop({ required: true })
   url!: string;
 }
 
