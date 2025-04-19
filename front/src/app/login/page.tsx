@@ -1,5 +1,4 @@
-import LoginForm from "@/components/auth/LoginForm";
-import { Flex, Layout } from "antd";
+import LoginForm from "@/features/auth/ui/LoginForm";
 
 const Login = () => {
   return (

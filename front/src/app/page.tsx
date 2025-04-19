@@ -1,14 +1,11 @@
-import FileUpload from "@/components/FileUpload";
-import FileList from "@/components/FileList";
+"use client";
+
+import { Spin } from "antd";
 
 export default function HomePage() {
   return (
     <div style={{ padding: 24 }}>
-      <h1>Управление файлами</h1>
-      <FileUpload />
-      <div style={{ marginTop: 32 }}>
-        <FileList />
-      </div>
+      <Spin />
     </div>
   );
 }

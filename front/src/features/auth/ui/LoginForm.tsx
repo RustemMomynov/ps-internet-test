@@ -2,28 +2,36 @@
 
 import { gql, useMutation } from "@apollo/client";
 import { Form, Input, Button } from "antd";
+import { useRouter } from "next/navigation";
+import { LOGIN_MUTATION } from "../api/AuthApi";
 
 type FormValuesTyle = {
   username: string;
   password: string;
 };
 
-export const LOGIN_MUTATION = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password)
-  }
-`;
-
 const LoginForm = () => {
   const [loginMutation] = useMutation(LOGIN_MUTATION);
+
+  const router = useRouter();
 
   const handleLogin = async ({ username, password }: FormValuesTyle) => {
     try {
       const receivedToken = await loginMutation({
         variables: { username, password },
       });
-      console.log(receivedToken.data.login);
-      localStorage.setItem("token", receivedToken.data.login);
+
+      const token = receivedToken.data.login;
+
+      await fetch("/api/auth/set-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      router.push("/login");
     } catch (error) {
       console.log(error);
     }

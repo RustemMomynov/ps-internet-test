@@ -11,33 +11,10 @@ import {
   Pagination,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { DELETE_FILE, GET_FILES } from "@/features/fIles/api/fileApi";
 
-const GET_FILES = gql`
-  query GetFiles($page: Int, $pageSize: Int, $search: String) {
-    getFiles(page: $page, pageSize: $pageSize, search: $search) {
-      items {
-        _id
-        name
-        url
-        size
-        type
-        createdAt
-      }
-      total
-      page
-      pageSize
-    }
-  }
-`;
-
-const DELETE_FILE = gql`
-  mutation DeleteFile($id: ID!) {
-    deleteFile(id: $id)
-  }
-`;
-
-const FileList: React.FC = () => {
+const FileList = () => {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(1);
   const [search, setSearch] = useState("");
@@ -59,8 +36,8 @@ const FileList: React.FC = () => {
     try {
       await deleteFile({
         variables: { id },
+        refetchQueries: ["getFiles"],
       });
-      refetch();
     } catch (err) {
       console.error(err);
     }
