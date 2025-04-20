@@ -1,8 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@/lib/apolloClient";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Layout } from "antd";
+import "./globals.css";
+import { ProgressPreloader } from "@/components/ProgressPreloader";
+
+const { Header } = Layout;
 
 export default function RootLayout({
   children,
@@ -12,9 +16,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ApolloProvider client={apolloClient}>
-          <ConfigProvider>{children}</ConfigProvider>
-        </ApolloProvider>
+        <Layout>
+          <Header style={{ padding: 0 }}></Header>
+          <ProgressPreloader />
+          <ApolloProvider client={apolloClient}>
+            <ConfigProvider>{children}</ConfigProvider>
+          </ApolloProvider>
+        </Layout>
       </body>
     </html>
   );

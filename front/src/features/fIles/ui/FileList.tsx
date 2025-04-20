@@ -16,7 +16,7 @@ import { DELETE_FILE, GET_FILES } from "@/features/fIles/api/fileApi";
 
 const FileList = () => {
   const [page, setPage] = useState(1);
-  const pageSize = 3;
+  const pageSize = 5;
   const [search, setSearch] = useState("");
 
   const { data, loading } = useQuery(GET_FILES, {
