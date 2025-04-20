@@ -1,5 +1,5 @@
 import express from "express";
-import { createYoga, createSchema } from "graphql-yoga";
+import { createYoga } from "graphql-yoga";
 import dotenv from "dotenv";
 import { connectDB } from "./utils/db";
 import cors from "cors";
@@ -8,81 +8,7 @@ import { schema } from "./schema";
 
 dotenv.config();
 
-const SECRET = "supersecret";
-
-// const SECRET = "supersecret";
-
-// const typeDefs = /* GraphQL */ `
-//   scalar JSON
-//   scalar Date
-
-//   type PresignedPostData {
-//     url: String!
-//     fields: JSON!
-//   }
-
-//   type File {
-//     _id: ID!
-//     name: String!
-//     url: String!
-//     createdAt: String!
-//     updatedAt: String!
-//   }
-
-//   type Query {
-//     secretData: String!
-//     getPresignedPost(fileName: String!): PresignedPostData!
-//   }
-
-//   input SaveFileInput {
-//     name: String!
-//     url: String!
-//   }
-
-//   type Mutation {
-//     login(username: String!, password: String!): String!
-//     saveFiles(files: [SaveFileInput!]!): [File!]!
-//   }
-// `;
-
-// const resolvers = {
-//   Query: {
-//     secretData: (_: any, __: any, context: any) => {
-//       if (!context.user) {
-//         throw new Error("Нет доступа");
-//       }
-//       return "Секретная информация";
-//     },
-//     getPresignedPost: async (_: any, { fileName }: { fileName: string }) => {
-//       const data = await createPresignedPost(fileName);
-//       return {
-//         url: data.url,
-//         fields: data.fields,
-//       };
-//     },
-//   },
-//   Mutation: {
-//     login: async (_: any, { username, password }: any) => {
-//       if (username !== fakeUser.username) {
-//         throw new Error("Неверный логин");
-//       }
-
-//       const isValid = await bcrypt.compare(password, fakeUser.password);
-//       if (!isValid) {
-//         throw new Error("Неверный пароль");
-//       }
-
-//       const token = jwt.sign({ username }, SECRET, { expiresIn: "1h" });
-//       return token;
-//     },
-//     saveFiles: async (
-//       _: any,
-//       { files }: { files: { name: string; url: string }[] }
-//     ) => {
-//       return await FileModel.insertMany(files);
-//     },
-//   },
-// };
+export const SECRET = "super secret";
 
 async function main() {
   try {
@@ -108,6 +34,30 @@ async function main() {
 
         return { user };
       },
+      // context: ({ request, params }) => {
+      //   const operationName = params?.operationName;
+      //   if (operationName === "Login") {
+      //     return { user: null };
+      //   }
+
+      //   const auth = request.headers.get("Authorization");
+      //   if (!auth?.startsWith("Bearer ")) {
+      //     throw new Error("Нет авторизации");
+      //   }
+
+      //   const token = auth.slice(7);
+      //   console.log(`token: "${token}"`);
+      //   console.log(`secret: "${SECRET}"`);
+      //   try {
+      //     const user = jwt.verify(token, "test", {
+      //       ignoreExpiration: true,
+      //     });
+      //     return { user };
+      //   } catch (err) {
+      //     console.log("token err", err);
+      //     throw new Error("Неверный или просроченный токен");
+      //   }
+      // },
     });
 
     app.use(cors({ origin: "http://localhost:3000", credentials: true }));

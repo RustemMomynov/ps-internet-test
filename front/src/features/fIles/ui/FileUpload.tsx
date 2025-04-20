@@ -5,6 +5,7 @@ import { Upload, Button, message, Space, Image } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { GET_PRESIGNED_POST, SAVE_FILES } from "../api/fileApi";
+import useLoadingStore from "@/bll/LoadingStore";
 
 interface UploadFileData {
   file: File;
@@ -18,6 +19,7 @@ const FileUpload = () => {
   const [fileList, setFileList] = useState<any[]>([]);
 
   const [uploads, setUploads] = useState<UploadFileData[]>([]);
+  const { setIsLoading } = useLoadingStore();
 
   const handleCustomRequest = async (options: any) => {
     const { file, onSuccess, onError } = options;
@@ -56,6 +58,7 @@ const FileUpload = () => {
   };
 
   const handleUploadToServer = async () => {
+    setIsLoading(true);
     const filesToSave = uploads
       .filter((u) => u.uploaded && u.url)
       .map((u) => ({
@@ -79,9 +82,11 @@ const FileUpload = () => {
       message.success("Файлы сохранены в базе данных");
       setUploads([]);
       setFileList([]);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       message.error("Ошибка при сохранении файлов");
+      setIsLoading(false);
     }
   };
 

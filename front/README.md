@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Проект представляет собой веб-приложение для управления файлами, позволяющее пользователям
+загружать, просматривать и удалять файлы. Это фронтенд-приложение, построенное с использованием технологий Next.js.
 
-## Getting Started
+Стек:
 
-First, run the development server:
+1. Фреймворк и библиотеки для разработки:
+   Next.js (версия 15.3.0) — фреймворк для React с поддержкой серверного рендеринга и маршрутизации.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+React (версия 19.x) — библиотека для создания пользовательских интерфейсов.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+React DOM (версия 19.x) — библиотека для рендеринга React-компонентов в браузере.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+TypeScript (версия 5.x) — надстройка над JavaScript для добавления типизации.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Состояние и управление данными:
+   Zustand (версия 5.0.3) — простой и легковесный стейт-менеджер для React, использующий API хуков.
 
-## Learn More
+3. API и запросы:
+   Apollo Client (версия 3.13.7) — библиотека для работы с GraphQL API.
 
-To learn more about Next.js, take a look at the following resources:
+GraphQL (версия 16.10.0) — спецификация для запросов и манипуляций с данными через API.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. UI и компоненты:
+   Ant Design (antd) (версия 5.24.6) — популярная UI-библиотека с компонентами для быстрого построения интерфейсов.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+@types/antd (версия 1.0.4) — типы для Ant Design, обеспечивающие поддержку TypeScript.
 
-## Deploy on Vercel
+5. Утилиты и помощь с cookie:
+   js-cookie (версия 3.0.5) — библиотека для работы с cookie в браузере.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+cookie (версия 1.0.2) — утилита для работы с cookie в Node.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+@types/cookie (версия 1.0.0) — типы для cookie для TypeScript.
+
+@types/js-cookie (версия 3.0.6) — типы для библиотеки js-cookie для TypeScript.

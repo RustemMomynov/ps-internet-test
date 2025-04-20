@@ -4,6 +4,7 @@ import {
   createHttpLink,
   ApolloLink,
 } from "@apollo/client";
+import Cookies from "js-cookie";
 
 const httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql",

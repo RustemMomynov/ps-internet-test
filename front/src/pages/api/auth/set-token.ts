@@ -8,6 +8,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ message: "No token provided" });
   }
 
+  console.log("SET TOKEN", new Date(), token);
+
   res.setHeader(
     "Set-Cookie",
     cookie.serialize("token", token, {

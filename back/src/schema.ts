@@ -4,8 +4,7 @@ import jwt from "jsonwebtoken";
 import { fakeUser } from "./auth/User";
 import bcrypt from "bcryptjs";
 import { createPresignedPost } from "./utils/s3";
-
-const SECRET = "supersecret";
+import { SECRET } from ".";
 
 const typeDefs = /* GraphQL */ `
   scalar JSON
@@ -41,14 +40,36 @@ const typeDefs = /* GraphQL */ `
   }
 
   type Query {
+    """
+    Возвращает секретные данные, требует авторизации
+    """
     secretData: String!
+
+    """
+    Генерирует данные для загрузки файла на S3 через форму (presigned POST)
+    """
     getPresignedPost(fileName: String!): PresignedPostData!
+
+    """
+    Получение списка файлов с пагинацией и фильтром по названию
+    """
     getFiles(page: Int, pageSize: Int, search: String): FilePagination!
   }
 
   type Mutation {
+    """
+    Аутентификация пользователя. Возвращает JWT токен при успешном входе.
+    """
     login(username: String!, password: String!): String!
+
+    """
+    Сохраняет информацию о загруженных файлах в базе данных.
+    """
     saveFiles(files: [SaveFileInput!]!): [File!]!
+
+    """
+    Удаляет файл по ID. Возвращает true при успешном удалении.
+    """
     deleteFile(id: ID!): Boolean!
   }
 `;
@@ -114,8 +135,9 @@ const resolvers = {
       if (!isValid) {
         throw new Error("Неверный пароль");
       }
-
-      const token = jwt.sign({ username }, SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ username }, SECRET, {
+        expiresIn: "1h",
+      });
       return token;
     },
   },
