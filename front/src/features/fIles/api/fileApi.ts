@@ -23,3 +23,22 @@ export const DELETE_FILE = gql`
     deleteFile(id: $id)
   }
 `;
+
+export const GET_PRESIGNED_POST = gql`
+  query GetPresignedPost($fileName: String!) {
+    getPresignedPost(fileName: $fileName) {
+      url
+      fields
+    }
+  }
+`;
+
+export const SAVE_FILES = gql`
+  mutation SaveFiles($files: [SaveFileInput!]!) {
+    saveFiles(files: $files) {
+      _id
+      name
+      url
+    }
+  }
+`;

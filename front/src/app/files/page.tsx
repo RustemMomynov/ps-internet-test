@@ -1,7 +1,7 @@
 "use client";
 
-import FileUpload from "@/components/FileUpload";
-import FileList from "@/components/FileList";
+import FileUpload from "@/features/fIles/ui/FileUpload";
+import FileList from "@/features/fIles/ui/FileList";
 import { Button } from "antd";
 import { useRouter } from "next/navigation";
 

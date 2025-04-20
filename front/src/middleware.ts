@@ -1,20 +1,24 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  console.log("Middleware is working");
-  const token = request.cookies.get("token")?.value;
+function isValidJWT(token: string): boolean {
+  const parts = token.split(".");
+  return parts.length === 3 && parts.every((part) => part.length > 0);
+}
 
-  console.log("TOKEN", token);
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("token")?.value;
 
   const { pathname } = request.nextUrl;
 
+  const isTokenValid = token && isValidJWT(token);
+
   switch (true) {
-    case !token && pathname !== "/login":
+    case !isTokenValid && pathname !== "/login":
       return NextResponse.redirect(new URL("/login", request.url));
 
-    case token && pathname === "/login":
-    case token && pathname === "/":
+    case isTokenValid && pathname === "/login":
+    case isTokenValid && pathname === "/":
       return NextResponse.redirect(new URL("/files", request.url));
 
     default:

@@ -16,10 +16,10 @@ import { DELETE_FILE, GET_FILES } from "@/features/fIles/api/fileApi";
 
 const FileList = () => {
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(1);
+  const pageSize = 3;
   const [search, setSearch] = useState("");
 
-  const { data, loading, refetch } = useQuery(GET_FILES, {
+  const { data, loading } = useQuery(GET_FILES, {
     variables: { page, pageSize, search },
   });
   const [deleteFile] = useMutation(DELETE_FILE);
@@ -143,7 +143,7 @@ const FileList = () => {
         total={total}
         pageSize={pageSize}
         onChange={(p) => setPage(p)}
-        style={{ marginTop: 16, textAlign: "center" }}
+        style={{ margin: "0px auto" }}
       />
     </>
   );

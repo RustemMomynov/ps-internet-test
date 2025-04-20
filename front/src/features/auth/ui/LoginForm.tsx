@@ -3,7 +3,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { Form, Input, Button } from "antd";
 import { useRouter } from "next/navigation";
-import { LOGIN_MUTATION } from "../api/AuthApi";
+import { LOGIN_MUTATION } from "../api/authApi";
 
 type FormValuesTyle = {
   username: string;

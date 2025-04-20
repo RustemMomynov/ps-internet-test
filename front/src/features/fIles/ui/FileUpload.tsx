@@ -4,26 +4,7 @@ import { useState } from "react";
 import { Upload, Button, message, Space, Image } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { gql } from "@apollo/client";
-
-const GET_PRESIGNED_POST = gql`
-  query GetPresignedPost($fileName: String!) {
-    getPresignedPost(fileName: $fileName) {
-      url
-      fields
-    }
-  }
-`;
-
-const SAVE_FILES = gql`
-  mutation SaveFiles($files: [SaveFileInput!]!) {
-    saveFiles(files: $files) {
-      _id
-      name
-      url
-    }
-  }
-`;
+import { GET_PRESIGNED_POST, SAVE_FILES } from "../api/fileApi";
 
 interface UploadFileData {
   file: File;
@@ -34,12 +15,13 @@ interface UploadFileData {
 const FileUpload = () => {
   const [getPresignedPost] = useLazyQuery(GET_PRESIGNED_POST);
   const [saveFiles, { loading }] = useMutation(SAVE_FILES);
+  const [fileList, setFileList] = useState<any[]>([]);
+
   const [uploads, setUploads] = useState<UploadFileData[]>([]);
 
   const handleCustomRequest = async (options: any) => {
     const { file, onSuccess, onError } = options;
     try {
-      console.log(getPresignedPost);
       const { data } = await getPresignedPost({
         variables: { fileName: file.name },
       });
@@ -96,6 +78,7 @@ const FileUpload = () => {
 
       message.success("Файлы сохранены в базе данных");
       setUploads([]);
+      setFileList([]);
     } catch (err) {
       console.error(err);
       message.error("Ошибка при сохранении файлов");
@@ -108,6 +91,8 @@ const FileUpload = () => {
         multiple
         customRequest={handleCustomRequest}
         showUploadList={true}
+        fileList={fileList}
+        onChange={({ fileList }) => setFileList(fileList)}
       >
         <Button icon={<UploadOutlined />}>Выбрать файлы</Button>
       </Upload>
